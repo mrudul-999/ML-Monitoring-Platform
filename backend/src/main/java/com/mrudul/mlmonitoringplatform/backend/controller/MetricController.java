@@ -1,43 +1,31 @@
 package com.mrudul.mlmonitoringplatform.backend.controller;
 
+import com.mrudul.mlmonitoringplatform.backend.dto.MetricRequest;
+import com.mrudul.mlmonitoringplatform.backend.service.MetricsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mrudul.mlmonitoringplatform.backend.dto.MetricRequest;
-import com.mrudul.mlmonitoringplatform.backend.repository.MetricRepository; // Ensure this path is correct
-import com.mrudul.mlmonitoringplatform.backend.entity.Metric;
-import java.time.LocalDateTime; // Import LocalDateTime
-
 @RestController
 @RequestMapping("/metrics")
 public class MetricController {
 
-    private final MetricRepository metricRepository; // Use camelCase for variable names
+    private final MetricsService influxService;
 
-    public MetricController(MetricRepository metricRepository)
-    {
-        this.metricRepository = metricRepository;
+    public MetricController(MetricsService influxService) {
+        this.influxService = influxService;
     }
 
     @PostMapping
-    public ResponseEntity<String> recieveMetrics(@RequestBody MetricRequest metricRequest) // Correct parameter name
-    {
-
-       
-        Metric newMetric = new Metric();
-        newMetric.setCpu(metricRequest.getCpu());
-        newMetric.setMemory(metricRequest.getMemory());
-        newMetric.setLatency(metricRequest.getLatency());
-        newMetric.setErrorRate(metricRequest.getErrorRate());
-        newMetric.setTimestamp(LocalDateTime.now());
-
-        this.metricRepository.save(newMetric); // Use 'this' to refer to the instance variable
-
-        return ResponseEntity.ok("Metrics Recieved");
-        
+    public ResponseEntity<String> recieveMetrics(@RequestBody MetricRequest metricRequest) {
+        influxService.writeMetrics(
+                metricRequest.getCpu(),
+                metricRequest.getMemory(),
+                metricRequest.getLatency(),
+                metricRequest.getErrorRate()
+        );
+        return ResponseEntity.ok("Metrics Received in InfluxDB");
     }
-    
 }

@@ -1,0 +1,6 @@
+influx:
+  url: http://localhost:8086
+  token: l6z5m3ZF_ECujIuZOeKwgl61gjvoXYXNViiK6r35JOFAbdpBiFUu-nqcWSdCUt1Y_U2njtjt0ZjosxC5JuB5Sw==
+  org: ml-monitoring
+  bucket: metrics
+
